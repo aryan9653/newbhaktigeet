@@ -88,28 +88,18 @@ from flask_dance.contrib.google import make_google_blueprint, google
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
 app = Flask(__name__)
-# This secret key is for signing the Flask session cookie, not the JWT.
 app.secret_key = os.urandom(24)
-# This secret key is for signing the JWT.
 app.config["JWT_SECRET_KEY"] = os.urandom(24)
 jwt = JWTManager(app)
-
-# This line allows OAuthlib to work with HTTP locally for development.
-# In production, you MUST use HTTPS.
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
-# Create a Flask-Dance blueprint for Google OAuth
 google_bp = make_google_blueprint(
-    # Replace with your Client ID from Google Cloud Console
     client_id="YOUR_GOOGLE_CLIENT_ID_HERE",
-    # Replace with your Client Secret from Google Cloud Console
     client_secret="YOUR_GOOGLE_CLIENT_SECRET_HERE",
     redirect_url="/login/google/authorized",
-    # Scopes define what information we are asking for from Google
     scope=["profile", "email"]
 )
 
-# Register the blueprint with the main Flask app
 app.register_blueprint(google_bp, url_prefix="/login")
 
 @app.route("/")
@@ -120,21 +110,18 @@ def home():
 @app.route("/login/google/authorized")
 def authorized():
     """Callback route that Google redirects to after authentication."""
-    # Check if the user authorized the request
     if not google.authorized:
-        # If not, redirect them back to the Google login page
         return redirect(url_for("google.login"))
 
-    # If authorized, fetch the user's info from Google's userinfo endpoint
     resp = google.get("/oauth2/v2/userinfo")
     assert resp.ok, resp.text
     user_info = resp.json()
     user_email = user_info["email"]
 
-    # Create a JWT for our internal API, using the user's email as the identity
+
     access_token = create_access_token(identity=user_email)
 
-    # Return the JWT to the user
+
     return jsonify(message="Login Successful!", access_token=access_token)
 
 @app.route("/api/profile")
