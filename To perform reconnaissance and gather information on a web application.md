@@ -2,12 +2,10 @@
 
 > **⚠️ Disclaimer:** This experiment is for educational purposes only. All steps and commands should only be performed on web applications that you have explicit, written permission to test. [cite_start]For this guide, we will use **scanme.nmap.org**[cite: 32], a domain provided by the Nmap project specifically for safe and legal security testing.
 
----
 
 ## 🎯 Aim
-[cite_start]To perform reconnaissance and gather information on a web application. [cite: 10]
+To perform reconnaissance and gather information on a web application. 
 
----
 
 ## 🧠 Theory
 
@@ -28,7 +26,6 @@
 * [cite_start]Technologies used (web server, frameworks, CMS) [cite: 28]
 * [cite_start]Open ports and the services running on them [cite: 29]
 
----
 
 ## 🛠️ Prerequisites
 * A Linux-based operating system (like Kali Linux) or Windows with WSL2.
@@ -36,7 +33,6 @@
 * A web browser with Developer Tools.
 * (Optional) A browser extension like **Wappalyzer**.
 
----
 
 ## 🔬 Procedure
 
@@ -97,12 +93,10 @@ Start by gathering basic information from public records without touching the ta
     curl -I [http://scanme.nmap.org](http://scanme.nmap.org)
     ```
 
----
 
 ## 🎓 Learning Outcome
 [cite_start]Upon completing this experiment, you will understand the principles of reconnaissance and its critical role as the first phase of an ethical hacking engagement. [cite: 114] [cite_start]You will also gain practical experience using various tools and techniques to gather technical and infrastructure-related information about a target web application from public and direct sources. [cite: 115]
 
----
 
 ## 🏁 Conclusion
 Reconnaissance is a fundamental and indispensable phase in web application security testing. This experiment demonstrated that by combining passive techniques (like `whois` and Google Dorking) with active methods (like Nmap scanning), an ethical hacker can build a comprehensive profile of a target. The information gathered—from subdomains and IP addresses to the specific software versions in use—directly informs all subsequent phases of a penetration test, enabling a more focused and effective security assessment.
