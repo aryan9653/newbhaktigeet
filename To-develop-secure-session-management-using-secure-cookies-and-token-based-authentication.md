@@ -85,23 +85,13 @@ import os
 
 app = Flask(__name__)
 
-# In a real application, this key MUST be kept secret and should not be hardcoded.
-# It's better to load it from an environment variable.
 app.secret_key = os.urandom(24)
 
-# Configure secure cookie attributes for the session
 app.config.update(
-    # Prevents client-side JavaScript from accessing the cookie. A critical defense against XSS.
     SESSION_COOKIE_HTTPONLY=True,
-
-    # Ensures the cookie is only sent over an encrypted HTTPS connection.
     SESSION_COOKIE_SECURE=True,
 
-    # Mitigates CSRF attacks by controlling when the cookie is sent.
-    # 'Lax' is a good default. 'Strict' provides more security but can affect user experience.
     SESSION_COOKIE_SAMESITE='Lax',
-
-    # Sets the expiration time for the session cookie.
     PERMANENT_SESSION_LIFETIME=timedelta(minutes=30)
 )
 
@@ -125,10 +115,9 @@ LOGIN_TEMPLATE = """
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # In a real application, you would validate credentials against a database.
         if request.form.get('username') == 'admin':
             session['user'] = 'admin'
-            session.permanent = True  # Use the configured PERMANENT_SESSION_LIFETIME
+            session.permanent = True 
             return redirect(url_for('dashboard'))
         else:
             return "Invalid credentials!", 401
@@ -139,7 +128,6 @@ def dashboard():
     if 'user' in session:
         return f"<h1>Welcome to the Dashboard, {session['user']}!</h1>"
     else:
-        # If user is not in session, redirect to login page
         return redirect(url_for('login'))
 
 @app.route('/logout')
@@ -149,10 +137,6 @@ def logout():
 
 
 if __name__ == '__main__':
-    # The ssl_context='adhoc' creates a temporary self-signed certificate to enable HTTPS locally.
-    # This is ONLY for local development and testing.
-    # Your browser will show a security warning, which you can safely bypass for this test.
-    # In a production environment, you must use a proper SSL/TLS certificate from a Certificate Authority.
     app.run(debug=True, ssl_context='adhoc', port=5000)
 
 ```
@@ -199,35 +183,24 @@ import os
 
 app = Flask(__name__)
 
-# Configure the secret key for JWT. This should also be loaded from a secure location.
 app.config["JWT_SECRET_KEY"] = os.urandom(24)
-# Configure the expiration time for access tokens.
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=15)
 
-# Initialize the JWTManager
 jwt = JWTManager(app)
 
 @app.route('/login', methods=['POST'])
 def login():
-    # This endpoint expects JSON data in the request body.
     username = request.json.get("username", None)
     password = request.json.get("password", None)
-
-    # In a real app, validate credentials against a database.
     if username != 'apiuser' or password != 'password123':
         return jsonify({"msg": "Bad username or password"}), 401
 
-    # If credentials are correct, create a new access token for the user.
-    # The 'identity' can be any JSON-serializable data, typically the user's ID or username.
     access_token = create_access_token(identity=username)
     return jsonify(access_token=access_token)
 
-# This is a protected endpoint.
-# The @jwt_required() decorator ensures that a valid access token is present in the request.
 @app.route('/profile')
 @jwt_required()
 def profile():
-    # We can get the identity of the user who the token belongs to.
     current_user = get_jwt_identity()
     return jsonify(logged_in_as=current_user), 200
 
